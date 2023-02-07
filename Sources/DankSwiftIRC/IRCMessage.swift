@@ -38,13 +38,10 @@ public class IRCMessage {
       if !it.contains("=") {
         newTag[String(it)] = ""
       } else {
-        let parts = it.split(separator: "=")
+        let parts = it.split(separator: "=", omittingEmptySubsequences: false)
         newTag[String(parts[0])] = String(parts[1])
       }
     })
     tag = newTag
   }
-  
-
-
 }

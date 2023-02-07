@@ -1,13 +1,6 @@
 import DankSwiftIRC
 import XCTest
 
-class MyFirstTest: XCTestCase {
-  func testAdd() {
-    let input = 1 + 1
-    let output = 2
-    XCTAssertEqual(input, output, "1 + 1 should equal to 2")
-  }
-}
 
 class TestIRCParsing: XCTestCase {
   func testParsing1() {
