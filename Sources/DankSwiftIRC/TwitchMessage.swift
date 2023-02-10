@@ -7,15 +7,6 @@
 
 import Foundation
 
-public class TwitchMessage: Identifiable {
-    public var id: String
-    public var timestamp: Int64
-
-    init(id: String, timestamp: Int64) {
-        self.id = id
-        self.timestamp = timestamp
-    }
-}
 
 
 //public enum TwitchMessage {
@@ -46,21 +37,30 @@ public extension IRCMessage {
     }
 }
 
+public class TwitchMessage: Identifiable {
+    public var id: String
+    public var timestamp: Int64
+
+    init(id: String, timestamp: Int64) {
+        self.id = id
+        self.timestamp = timestamp
+    }
+}
+
 public class AutoIDMessage: TwitchMessage {
     public var raw: IRCMessage
 
     init(irc: IRCMessage) {
-        self.id = NSUUID().uuidString
-        self.timestamp = Int64(Date.now.timeIntervalSinceNow * 1000)
         self.raw = irc
+        super.init(id: NSUUID().uuidString, timestamp: Int64(Date().timeIntervalSince1970 * 1000))
     }
 }
 
 public class PingMessage: AutoIDMessage {
     public var pingPayload: String // e.g. PING [:tmi.twitch.tv] <- payload
     override init(irc: IRCMessage) {
-        super.init(irc: irc)
         pingPayload = irc.params
+        super.init(irc: irc)
     }
 }
 
@@ -68,17 +68,16 @@ public class PartMessage: AutoIDMessage {
     public var channels: [String]
 
     override init(irc: IRCMessage) {
-        super.init(irc: irc)
         let channelsPart = irc.params.components(separatedBy: " ").first!
         let channels = channelsPart.components(separatedBy: ",").map { String($0.dropFirst(1)) }
         self.channels = channels
+        super.init(irc: irc)
     }
 }
 
 public class NoticeMessage: TwitchMessage {
     init(irc: IRCMessage) {
-        self.id = ""
-        self.timestamp = 1
+        super.init(id: "", timestamp: 1)
     }
 }
 
@@ -144,9 +143,7 @@ public class PrivMessage: TwitchMessage {
         userColor = irc.tag["color"] ?? ""
         userLogin = String(irc.prefix[..<irc.prefix.firstIndex(of: "!")!])
         displayName = irc.tag["display-name"] ?? userLogin
-        timestamp = Int64(irc.tag["tmi-sent-ts"]!)!
         channelID = irc.tag["room-id"]!
-        id = irc.tag["id"]!
         
         let parts = irc.params.split(separator: " ", maxSplits: 1, omittingEmptySubsequences: false)
         let channelPart = parts[0]
@@ -160,6 +157,8 @@ public class PrivMessage: TwitchMessage {
         message = String(isAction ? rawMessage.dropFirst(8).dropLast(1) : rawMessage)
         
         emotes = parseEmotes(raw: irc.tag["emotes"] ?? "", message: message)
+        super.init(id: irc.tag["id"]!, timestamp: Int64(irc.tag["tmi-sent-ts"]!)!)
+        
     }
 }
 
