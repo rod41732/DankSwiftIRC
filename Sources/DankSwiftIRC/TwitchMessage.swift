@@ -7,40 +7,82 @@
 
 import Foundation
 
-public enum TwitchMessage {
-    // IRC Messages https://dev.twitch.tv/docs/irc
-    case noticeMessage(NoticeMessage)
-    case partMessage([String])
-    case pingMessage(String)
-    case privMessage(PrivMessage)
-    
-    case unknownMessgae(IRCMessage)
+public class TwitchMessage: Identifiable {
+    public var id: String
+    public var timestamp: Int64
+
+    init(id: String, timestamp: Int64) {
+        self.id = id
+        self.timestamp = timestamp
+    }
 }
+
+
+//public enum TwitchMessage {
+//    // IRC Messages https://dev.twitch.tv/docs/irc
+//    case noticeMessage(NoticeMessage)
+//    case partMessage([String])
+//    case pingMessage(String)
+//    case privMessage(PrivMessage)
+//
+//    case unknownMessgae(IRCMessage)
+//}
 
 public extension IRCMessage {
     func asTwitchMessage() -> TwitchMessage {
         switch command {
         case "NOTICE":
-            return .noticeMessage(NoticeMessage(irc: self))
+            return NoticeMessage(irc: self)
         case "PART":
-            let channelsPart = params.components(separatedBy: " ").first!
-            let channels = channelsPart.components(separatedBy: ",").map { String($0.dropFirst(1)) }
-            return .partMessage(channels)
+            return PartMessage(irc: self)
         case "PING":
-            return .pingMessage(params)
+            return PingMessage(irc: self)
         case "PRIVMSG":
-            return .privMessage(PrivMessage(irc: self))
-            
+            return PrivMessage(irc: self)
         default:
-            return .unknownMessgae(self)
+            return UnknownMessage(irc: self)
         }
         
     }
 }
 
-public struct NoticeMessage {
-    init(irc: IRCMessage) { }
+public class AutoIDMessage: TwitchMessage {
+    public var raw: IRCMessage
+
+    init(irc: IRCMessage) {
+        self.id = NSUUID().uuidString
+        self.timestamp = Int64(Date.now.timeIntervalSinceNow * 1000)
+        self.raw = irc
+    }
 }
+
+public class PingMessage: AutoIDMessage {
+    public var pingPayload: String // e.g. PING [:tmi.twitch.tv] <- payload
+    override init(irc: IRCMessage) {
+        super.init(irc: irc)
+        pingPayload = irc.params
+    }
+}
+
+public class PartMessage: AutoIDMessage {
+    public var channels: [String]
+
+    override init(irc: IRCMessage) {
+        super.init(irc: irc)
+        let channelsPart = irc.params.components(separatedBy: " ").first!
+        let channels = channelsPart.components(separatedBy: ",").map { String($0.dropFirst(1)) }
+        self.channels = channels
+    }
+}
+
+public class NoticeMessage: TwitchMessage {
+    init(irc: IRCMessage) {
+        self.id = ""
+        self.timestamp = 1
+    }
+}
+
+public class UnknownMessage: AutoIDMessage {}
 
 public struct TwitchIRCEmote {
 //    public static func == (lhs: TwitchIRCEmote, rhs: TwitchIRCEmote) -> Bool {
@@ -70,8 +112,7 @@ extension String {
     }
 }
 
-public func parseEmote(_ part: String, message: String) -> TwitchIRCEmote {
-    // 100000:1-2,3-4
+public func parseEmote(_ part: String, message: String) -> TwitchIRCEmote {// 100000:1-2,3-4
     let parts = part.components(separatedBy: ":")
     let emoteID = parts[0]
     let positions = parts[1].components(separatedBy: ",").map { range in
@@ -83,14 +124,12 @@ public func parseEmote(_ part: String, message: String) -> TwitchIRCEmote {
     return TwitchIRCEmote(emoteID: emoteID, name: String(name), positions: positions)
 }
 
-public struct PrivMessage {
+public class PrivMessage: TwitchMessage {
     public var userColor: String // color in hex like #aabbcc, or empty if user haven't set any color
     public var userLogin: String
     public var displayName: String
     public var emotes: [TwitchIRCEmote]
-    public var timestamp: Int // ms since epoch
-    public var id: String
-    
+
     public var channelLogin: String
     public var channelID: String
     
@@ -105,7 +144,7 @@ public struct PrivMessage {
         userColor = irc.tag["color"] ?? ""
         userLogin = String(irc.prefix[..<irc.prefix.firstIndex(of: "!")!])
         displayName = irc.tag["display-name"] ?? userLogin
-        timestamp = Int(irc.tag["tmi-sent-ts"]!)!
+        timestamp = Int64(irc.tag["tmi-sent-ts"]!)!
         channelID = irc.tag["room-id"]!
         id = irc.tag["id"]!
         

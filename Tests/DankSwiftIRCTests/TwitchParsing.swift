@@ -9,6 +9,7 @@ import Foundation
 import XCTest
 import DankSwiftIRC
 
+
 class TwitchMessageParsingTest: XCTestCase {
     
     func testPartMessageSingleChannel() {
