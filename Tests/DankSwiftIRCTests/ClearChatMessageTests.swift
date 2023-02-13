@@ -13,7 +13,8 @@ class ClearChatMessageTests: XCTestCase {
         XCTAssertEqual(message.targetUserID, "87654321")
         XCTAssertEqual(message.targetUserLogin, "ronni")
         XCTAssertEqual(message.banDuration, nil)
-        XCTAssertEqual(message., expression2: Equatable)
+        XCTAssertEqual(message.isClearRoom, false)
+        XCTAssertEqual(message.isPermaBan, true)
         XCTAssertEqual(message.timestamp, 1642715756806)
       default:
         XCTFail("XD")
@@ -31,6 +32,8 @@ class ClearChatMessageTests: XCTestCase {
         XCTAssertEqual(message.targetUserID, nil)
         XCTAssertEqual(message.targetUserLogin, nil)
         XCTAssertEqual(message.banDuration, nil)
+        XCTAssertEqual(message.isClearRoom, true)
+        XCTAssertEqual(message.isPermaBan, false)
         XCTAssertEqual(message.timestamp, 1642715695392)
       default:
         XCTFail("XD")
@@ -47,6 +50,8 @@ class ClearChatMessageTests: XCTestCase {
         XCTAssertEqual(message.targetUserID, "87654321")
         XCTAssertEqual(message.targetUserLogin, "ronni")
         XCTAssertEqual(message.banDuration, 350)
+        XCTAssertEqual(message.isClearRoom, false)
+        XCTAssertEqual(message.isPermaBan, false)
         XCTAssertEqual(message.timestamp, 1642719320727)
       default:
         XCTFail("XD")

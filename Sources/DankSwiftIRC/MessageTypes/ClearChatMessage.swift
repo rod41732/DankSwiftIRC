@@ -10,10 +10,14 @@ public class ClearChatMessage: TwitchMessage {
     public var targetUserLogin: String? 
 
     public var isClearRoom: Bool {
-        return targetUserID == nil
+        get {
+            return targetUserID == nil
+        }
     }
     public var isPermaBan: Bool {
-        return targetUserID != nil && banDuration == nil
+        get {
+            return targetUserID != nil && banDuration == nil
+        }
     }
 
     init(irc: IRCMessage) {
