@@ -1,19 +1,12 @@
-
-public struct TwitchIRCEmote {
-//    public static func == (lhs: TwitchIRCEmote, rhs: TwitchIRCEmote) -> Bool {
-//        return lhs.emoteID == rhs.emoteID &&
-//        lhs.name == rhs.name &&
-//        lhs.positions == rhs.positions
-//    }
-    
+public struct PrivMessageEmote {
     public var emoteID: String
     public var name: String
-    public var positions: [(Int, Int)]
+    public var position: (Int, Int)
 }
 
-func parseEmotes(raw: String, message: String) -> [TwitchIRCEmote] {
-    return raw.components(separatedBy: "/").compactMap { part in
-        if part.isEmpty { return nil }
+func parseEmotes(raw: String, message: String) -> [PrivMessageEmote] {
+    return raw.components(separatedBy: "/").flatMap { part in
+        if part.isEmpty { return [PrivMessageEmote]() }
         return parseEmote(part, message: message)
     }
 }
@@ -27,23 +20,26 @@ extension String {
     }
 }
 
-public func parseEmote(_ part: String, message: String) -> TwitchIRCEmote {// 100000:1-2,3-4
+public func parseEmote(_ part: String, message: String) -> [PrivMessageEmote] {// 100000:1-2,3-4
     let parts = part.components(separatedBy: ":")
+
     let emoteID = parts[0]
+
     let positions = parts[1].components(separatedBy: ",").map { range in
         let nums = range.components(separatedBy: "-")
         return (Int(nums[0])!, Int(nums[1])!)
     }
     let (from, to) = positions[0]
     let name = message.unicodeSubstring(from: from, to: to + 1) // twitch indexing is inclusive end
-    return TwitchIRCEmote(emoteID: emoteID, name: String(name), positions: positions)
+
+    return positions.map { it in PrivMessageEmote(emoteID: emoteID, name: name, position: it) }
 }
 
 public class PrivMessage: TwitchMessage {
     public var userColor: String // color in hex like #aabbcc, or empty if user haven't set any color
     public var userLogin: String
     public var displayName: String
-    public var emotes: [TwitchIRCEmote]
+    public var emotes: [PrivMessageEmote]
 
     public var channelLogin: String
     public var channelID: String
@@ -72,7 +68,7 @@ public class PrivMessage: TwitchMessage {
         isAction = rawMessage.prefix(8) == "\u{1}ACTION "
         message = String(isAction ? rawMessage.dropFirst(8).dropLast(1) : rawMessage)
         
-        emotes = parseEmotes(raw: irc.tag["emotes"] ?? "", message: message)
+        emotes = parseEmotes(raw: irc.tag["emotes"] ?? "", message: message).sorted(by: {m1, m2 in m1.position.0 < m2.position.0})
         super.init(id: irc.tag["id"]!, timestamp: Int64(irc.tag["tmi-sent-ts"]!)!)
         
     }

@@ -1,5 +1,8 @@
 import Foundation
 
+extension TwitchMessage {
+  var this: TwitchMessage { get { return self }}
+}
 public class ClearChatMessage: TwitchMessage {
     public var banDuration: Int? // seconds, nil if perma
 

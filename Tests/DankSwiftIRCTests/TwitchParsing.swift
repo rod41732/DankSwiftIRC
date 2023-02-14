@@ -85,8 +85,7 @@ class TwitchMessageParsingTest: XCTestCase {
             XCTAssertEqual(message.emotes.count, 1)
             let emote = message.emotes[0]
             XCTAssertEqual(emote.name, "Kappa")
-            XCTAssertEqual(emote.positions.count, 1)
-            let (from, to) = emote.positions[0]
+            let (from, to) = emote.position
             XCTAssertEqual(from, 6)
             XCTAssertEqual(to, 10)
         default:
@@ -104,8 +103,7 @@ class TwitchMessageParsingTest: XCTestCase {
             XCTAssertEqual(message.emotes.count, 1)
             let emote = message.emotes[0]
             XCTAssertEqual(emote.name, "Kappa")
-            XCTAssertEqual(emote.positions.count, 1)
-            let (from, to) = emote.positions[0]
+            let (from, to) = emote.position
             XCTAssertEqual(from, 14)
             XCTAssertEqual(to, 18)
         default:
@@ -158,6 +156,23 @@ class TwitchMessageParsingTest: XCTestCase {
         default:
             XCTFail("Expected to be parsed as PRIVMSG message")
         }
-        
+    }
+    func testPrivMessageParsingEmotesAreSorted() {
+        let irc = "@badge-info=subscriber/2;badges=subscriber/0,no_audio/1;color=#FF69B4;display-name=doge41732;emotes=25:6-10,18-22/1902:12-16;first-msg=0;flags=;id=a0a3be01-3400-4ec5-90cf-d3a468089f1e;mod=0;returning-chatter=0;room-id=11148817;subscriber=1;tmi-sent-ts=1676400364187;turbo=0;user-id=115117172;user-type= :doge41732!doge41732@doge41732.tmi.twitch.tv PRIVMSG #pajlada :-tags Kappa Keepo Kappa"
+        let message = IRCMessage(message: irc).asTwitchMessage()
+        switch message {
+        case let message as PrivMessage:
+            XCTAssertEqual(message.message, "-tags Kappa Keepo Kappa")
+            XCTAssertEqual(message.emotes.count, 3)
+            // NOTE we assume order of emote is related to the input here, it's pretty bad
+            XCTAssertEqual(message.emotes[0].name, "Kappa")
+            XCTAssertEqual(message.emotes[0].position.0, 6)
+            XCTAssertEqual(message.emotes[1].name, "Keepo")
+            XCTAssertEqual(message.emotes[1].position.0, 12)
+            XCTAssertEqual(message.emotes[2].name, "Kappa")
+            XCTAssertEqual(message.emotes[2].position.0, 18)
+        default:
+            XCTFail("Expected to be parsed as PRIVMSG message")
+        }
     }
 }

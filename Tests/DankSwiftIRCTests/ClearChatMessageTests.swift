@@ -1,6 +1,7 @@
 import XCTest
 import DankSwiftIRC
 
+
 class ClearChatMessageTests: XCTestCase {
 
   func testPermaBan() {
