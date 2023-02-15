@@ -32,6 +32,8 @@ public extension IRCMessage {
             return PrivMessage(irc: self)
         case "CLEARCHAT":
             return ClearChatMessage(irc: self)
+        case "GLOBALUSERSTATE":
+            return GlobalUserStateMessage(irc: self)
         default:
             return UnknownMessage(irc: self)
         }
@@ -49,6 +51,9 @@ public class TwitchMessage: Identifiable {
     }
 }
 
+/** AutoIDMessage: generate ID and timestamps at the time it parse, it's not deterministic
+ * however it's useful for some type of messages without time information
+ */
 public class AutoIDMessage: TwitchMessage {
     public var raw: IRCMessage
 
