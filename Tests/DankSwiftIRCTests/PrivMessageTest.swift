@@ -11,41 +11,6 @@ import DankSwiftIRC
 
 
 class TwitchMessageParsingTest: XCTestCase {
-    
-    func testPartMessageSingleChannel() {
-        let irc = ":tmi.twitch.tv PART #pajlada"
-        let message = IRCMessage(message: irc).asTwitchMessage()
-        switch message {
-        case let message as PartMessage:
-            XCTAssertEqual(message.channels, ["pajlada"])
-        default:
-            XCTFail("Expected to be parsed as PART message")
-        }
-    }
-    
-    func testPartMessageMultiChannel() {
-        let irc = ":tmi.twitch.tv PART #pajlada,#flex3rs"
-        let message = IRCMessage(message: irc).asTwitchMessage()
-        switch message {
-        case let message as PartMessage:
-            XCTAssertEqual(message.channels, ["pajlada", "flex3rs"])
-        default:
-            XCTFail("Expected to be parsed as PART message")
-        }
-    }
-    
-    func testParsePingMessage() {
-        let irc = "PING :tmi.twitch.tv"
-        let message = IRCMessage(message: irc).asTwitchMessage()
-        switch message {
-        case let message as  PingMessage:
-            XCTAssertEqual(message.pingPayload, ":tmi.twitch.tv")
-        default:
-            XCTFail("Expected to be parsed as PING message")
-        }
-    }
-    
-    
     func testPrivMessageParsing() {
         let irc = "@badge-info=subscriber/2;badges=subscriber/0,no_audio/1;color=#FF69B4;display-name=DOGE41732;emotes=;first-msg=0;flags=;id=224546ee-1715-4d2e-a8f8-53e71e3bb817;mod=0;returning-chatter=0;room-id=11148817;subscriber=1;tmi-sent-ts=1675764985001;turbo=0;user-id=115117172;user-type= :doge41732!doge41732@doge41732.tmi.twitch.tv PRIVMSG #pajlada :-tags FeelsDankMan"
         let message = IRCMessage(message: irc).asTwitchMessage()
