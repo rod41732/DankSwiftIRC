@@ -1,7 +1,6 @@
 import DankSwiftIRC
 import XCTest
 
-
 class TestIRCParsing: XCTestCase {
   func testParsing1() {
     let irc = ":tmi.twitch.tv 001 doge41732 :Welcome, GLHF!"
@@ -15,10 +14,12 @@ class TestIRCParsing: XCTestCase {
   func testParsingMessageWithTagAndPrefix() {
     let irc = "@foo=1;bar=2 :my.prefix command arg1 arg2"
     let parsed = IRCMessage(message: irc)
-    XCTAssertEqual(parsed.tag, [
-      "foo": "1",
-      "bar": "2"
-    ])
+    XCTAssertEqual(
+      parsed.tag,
+      [
+        "foo": "1",
+        "bar": "2",
+      ])
     XCTAssertEqual(parsed.prefix, "my.prefix")
     XCTAssertEqual(parsed.command, "command")
     XCTAssertEqual(parsed.params, "arg1 arg2")
@@ -28,11 +29,13 @@ class TestIRCParsing: XCTestCase {
     let irc = "@foo=1;bar=2 command arg1 arg2"
     // let irc = "@foo=1;bar=2 :my.prefix command arg1 arg2"
     let parsed = IRCMessage(message: irc)
-    XCTAssertEqual(parsed.tag, [
-      "foo": "1",
-      "bar": "2"
-    ])
-    XCTAssertEqual(parsed.prefix, "") // absence is represented as empty
+    XCTAssertEqual(
+      parsed.tag,
+      [
+        "foo": "1",
+        "bar": "2",
+      ])
+    XCTAssertEqual(parsed.prefix, "")  // absence is represented as empty
     XCTAssertEqual(parsed.command, "command")
     XCTAssertEqual(parsed.params, "arg1 arg2")
   }
@@ -41,7 +44,7 @@ class TestIRCParsing: XCTestCase {
     let irc = ":my.prefix command arg1 arg2"
     let parsed = IRCMessage(message: irc)
     XCTAssertEqual(parsed.tag, [:])
-    XCTAssertEqual(parsed.prefix, "my.prefix") // absence is represented as empty
+    XCTAssertEqual(parsed.prefix, "my.prefix")  // absence is represented as empty
     XCTAssertEqual(parsed.command, "command")
     XCTAssertEqual(parsed.params, "arg1 arg2")
   }
@@ -50,7 +53,7 @@ class TestIRCParsing: XCTestCase {
     let irc = "command arg1 arg2"
     let parsed = IRCMessage(message: irc)
     XCTAssertEqual(parsed.tag, [:])
-    XCTAssertEqual(parsed.prefix, "") // absence is represented as empty
+    XCTAssertEqual(parsed.prefix, "")  // absence is represented as empty
     XCTAssertEqual(parsed.command, "command")
     XCTAssertEqual(parsed.params, "arg1 arg2")
   }
@@ -59,10 +62,9 @@ class TestIRCParsing: XCTestCase {
     let irc = "command"
     let parsed = IRCMessage(message: irc)
     XCTAssertEqual(parsed.tag, [:])
-    XCTAssertEqual(parsed.prefix, "") // absence is represented as empty
+    XCTAssertEqual(parsed.prefix, "")  // absence is represented as empty
     XCTAssertEqual(parsed.command, "command")
     XCTAssertEqual(parsed.params, "")
   }
-
 
 }
