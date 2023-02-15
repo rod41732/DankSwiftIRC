@@ -7,7 +7,7 @@ class GlobalUserStateMessageTest: XCTestCase {
     let message = IRCMessage(message: irc).asTwitchMessage()
     switch message {
       case let message as GlobalUserStateMessage:
-        break
+        XCTAssertEqual(message.emotesSets, ["0","33","50","237","793","2126","3517","4578","5569","9400","10337","12239"])
       default:
         XCTFail("Expected Message to be GlobalUserStateMessage")
     }
