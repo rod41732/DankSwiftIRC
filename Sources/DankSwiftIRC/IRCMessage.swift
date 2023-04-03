@@ -1,3 +1,35 @@
+public func unescape(_ s: String) -> String {
+  var result = ""
+  var bs = false
+  s.unicodeScalars.forEach({ char in
+    if bs {
+      bs = false
+      switch char {
+      case ":":
+        result.append(";")
+      case "s":
+        result.append(" ")
+      case "\\":
+        result.append("\\")
+      case "r":
+        result.append("\r")
+      case "n":
+        result.append("\n")
+      default:
+        result.append(String(char))
+      }
+    } else {
+      if char == "\\" {
+        bs = true
+      } else {
+        result.append(String(char))
+      }
+    }
+
+  })
+  return result
+}
+
 // IRCMessage represent single message according to IRCv3 https://ircv3.net/specs/extensions/message-tags.html
 public class IRCMessage {
   public var message: String  // raw message
@@ -40,7 +72,7 @@ public class IRCMessage {
         newTag[String(it)] = ""
       } else {
         let parts = it.split(separator: "=", omittingEmptySubsequences: false)
-        newTag[String(parts[0])] = String(parts[1])
+        newTag[String(parts[0])] = unescape(String(parts[1]))
       }
     })
     tag = newTag

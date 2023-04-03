@@ -49,6 +49,12 @@ public class PrivMessage: TwitchMessage {
 
   public var raw: IRCMessage
 
+  public var parentMessageId: String?
+  public var parentUserId: String?
+  public var parentUserLogin: String?
+  public var parentDisplayName: String?
+  public var parentBody: String?
+
   public init(irc: IRCMessage) {
     raw = irc
 
@@ -71,6 +77,15 @@ public class PrivMessage: TwitchMessage {
     emotes = parseEmotes(raw: irc.tag["emotes"] ?? "", message: message).sorted(by: { m1, m2 in
       m1.position.0 < m2.position.0
     })
+
+    if let parentId = irc.tag["reply-parent-msg-id"] {
+      parentMessageId = parentId
+      parentUserId = irc.tag["reply-parent-user-id"]!
+      parentUserLogin = irc.tag["reply-parent-user-login"]!
+      parentDisplayName = irc.tag["reply-parent-display-name"]!
+      parentBody = irc.tag["reply-parent-msg-body"]!
+    }
+
     super.init(id: irc.tag["id"]!, timestamp: Int64(irc.tag["tmi-sent-ts"]!)!)
 
   }

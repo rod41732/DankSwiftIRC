@@ -146,4 +146,22 @@ class TwitchMessageParsingTest: XCTestCase {
       XCTFail("Expected to be parsed as PRIVMSG message")
     }
   }
+
+  func testPrivMessageParsingWithReply() {
+    let irc =
+      "@badge-info=;badges=no_audio/1;color=#FF69B4;display-name=doge41732;emotes=;first-msg=0;flags=;id=9c06d046-1eb2-4833-82f4-461d1e36a9e7;mod=0;reply-parent-display-name=doge41732;reply-parent-msg-body=asd\\stest;reply-parent-msg-id=320ccea2-e317-4d0e-8043-26b7509a74c2;reply-parent-user-id=115117172;reply-parent-user-login=doge41732;returning-chatter=0;room-id=11148817;subscriber=0;tmi-sent-ts=1680545762223;turbo=0;user-id=115117172;user-type= :doge41732!doge41732@doge41732.tmi.twitch.tv PRIVMSG #pajlada :@doge41732 reply test FeelsDankMan"
+    let message = IRCMessage(message: irc).asTwitchMessage()
+    switch message {
+    case let message as PrivMessage:
+      XCTAssertEqual(message.parentMessageId, "320ccea2-e317-4d0e-8043-26b7509a74c2")
+      XCTAssertEqual(message.parentUserId, "115117172")
+      XCTAssertEqual(message.parentUserLogin, "doge41732")
+      XCTAssertEqual(message.parentDisplayName, "doge41732")
+      XCTAssertEqual(message.parentBody, "asd test")
+
+    default:
+      XCTFail("Expected to be parsed as PRIVMSG message")
+
+    }
+  }
 }
