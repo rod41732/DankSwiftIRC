@@ -87,6 +87,33 @@ public class PrivMessage: TwitchMessage {
     }
 
     super.init(id: irc.tag["id"]!, timestamp: Int64(irc.tag["tmi-sent-ts"]!)!)
-
   }
+
+  private func copy() -> PrivMessage {
+    return PrivMessage(irc: raw)
+  }
+
+  public func strippedUsernamePrefix() -> PrivMessage {
+    let copy = copy()
+    guard parentMessageId != nil else { return copy }
+    guard message.starts(with: "@" + parentUserLogin!) else { return copy }
+    let prefixLength = 2 + parentUserLogin!.unicodeScalars.count
+    let strippedMessage = message.unicodeSubstring(from: prefixLength, to: message.unicodeScalars.count)
+    let offsetedEmotes = emotes.map {it in 
+      PrivMessageEmote(
+        emoteID: it.emoteID, 
+        name: it.name, 
+        position: (it.position.0 - prefixLength, it.position.1 - prefixLength)
+      ) }
+
+    copy.message = strippedMessage
+    copy.emotes = offsetedEmotes
+
+    return copy
+  }
+
+
+
+
+
 }
