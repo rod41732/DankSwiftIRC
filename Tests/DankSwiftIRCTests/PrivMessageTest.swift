@@ -25,6 +25,7 @@ class TwitchMessageParsingTest: XCTestCase {
       XCTAssertEqual(message.id, "224546ee-1715-4d2e-a8f8-53e71e3bb817")
       XCTAssertEqual(message.channelLogin, "pajlada")
       XCTAssertEqual(message.channelID, "11148817")
+      XCTAssertEqual(message.userID, "115117172")
       XCTAssertEqual(message.message, "-tags FeelsDankMan")
       XCTAssertEqual(message.isAction, false)
     default:
@@ -43,6 +44,7 @@ class TwitchMessageParsingTest: XCTestCase {
       XCTFail("Expected to be parsed as PRIVMSG message")
     }
   }
+
   func testPrivMessageParsingWithEmotes() {
     let irc =
       "@badge-info=subscriber/2;badges=subscriber/0,no_audio/1;color=#FF69B4;display-name=doge41732;emotes=25:6-10;first-msg=0;flags=;id=32fc38c1-7b2a-49f7-93c8-9498df95e282;mod=0;returning-chatter=0;room-id=11148817;subscriber=1;tmi-sent-ts=1675791338326;turbo=0;user-id=115117172;user-type= :doge41732!doge41732@doge41732.tmi.twitch.tv PRIVMSG #pajlada :-tags Kappa"
@@ -77,8 +79,8 @@ class TwitchMessageParsingTest: XCTestCase {
     default:
       XCTFail("Expected to be parsed as PRIVMSG message")
     }
-
   }
+
   func testPrivMessageWithUnicode2() {
     let irc =
       "@badge-info=subscriber/2;badges=subscriber/0,no_audio/1;color=#FF69B4;display-name=doge41732;emotes=25:9-13/1902:20-24/305954156:28-35;first-msg=0;flags=;id=ab2212cb-57bb-4d40-87a9-4d2979bf1aab;mod=0;returning-chatter=0;room-id=11148817;subscriber=1;tmi-sent-ts=1675791853779;turbo=0;user-id=115117172;user-type= :doge41732!doge41732@doge41732.tmi.twitch.tv PRIVMSG #pajlada :-tags 🇩🇪 Kappa 🇩🇪 샤 Keepo 보 PogChamp"
@@ -127,6 +129,7 @@ class TwitchMessageParsingTest: XCTestCase {
       XCTFail("Expected to be parsed as PRIVMSG message")
     }
   }
+
   func testPrivMessageParsingEmotesAreSorted() {
     let irc =
       "@badge-info=subscriber/2;badges=subscriber/0,no_audio/1;color=#FF69B4;display-name=doge41732;emotes=25:6-10,18-22/1902:12-16;first-msg=0;flags=;id=a0a3be01-3400-4ec5-90cf-d3a468089f1e;mod=0;returning-chatter=0;room-id=11148817;subscriber=1;tmi-sent-ts=1676400364187;turbo=0;user-id=115117172;user-type= :doge41732!doge41732@doge41732.tmi.twitch.tv PRIVMSG #pajlada :-tags Kappa Keepo Kappa"
@@ -161,7 +164,6 @@ class TwitchMessageParsingTest: XCTestCase {
 
     default:
       XCTFail("Expected to be parsed as PRIVMSG message")
-
     }
   }
 }

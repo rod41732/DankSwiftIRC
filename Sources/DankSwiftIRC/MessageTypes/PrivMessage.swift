@@ -38,6 +38,7 @@ public func parseEmote(_ part: String, message: String) -> [PrivMessageEmote] { 
 public class PrivMessage: TwitchMessage {
   public var userColor: String // color in hex like #aabbcc, or empty if user haven't set any color
   public var userLogin: String
+  public var userID: String
   public var displayName: String
   public var emotes: [PrivMessageEmote]
 
@@ -62,6 +63,7 @@ public class PrivMessage: TwitchMessage {
     userLogin = String(irc.prefix[..<irc.prefix.firstIndex(of: "!")!])
     displayName = irc.tag["display-name"] ?? userLogin
     channelID = irc.tag["room-id"]!
+    userID = irc.tag["user-id"]!
 
     let parts = irc.params.split(separator: " ", maxSplits: 1, omittingEmptySubsequences: false)
     let channelPart = parts[0]
