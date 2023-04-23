@@ -94,8 +94,8 @@ public class PrivMessage: TwitchMessage {
 
   private func stripReplyUsernamePrefix() {
     guard parentMessageId != nil else { return }
-    guard message.starts(with: "@" + parentUserLogin!) else { return }
-    let prefixLength = 2 + parentUserLogin!.unicodeScalars.count
+    guard message.starts(with: "@" + parentDisplayName!) else { return }
+    let prefixLength = 2 + parentDisplayName!.unicodeScalars.count
     let strippedMessage = message.unicodeSubstring(from: prefixLength, to: message.unicodeScalars.count)
     let offsetedEmotes = emotes.map { it in
       PrivMessageEmote(
