@@ -42,7 +42,7 @@ open class TwitchMessage: Identifiable {
   public var id: String
   public var timestamp: Int64
 
-  init(id: String, timestamp: Int64) {
+  public init(id: String, timestamp: Int64) {
     self.id = id
     self.timestamp = timestamp
   }
