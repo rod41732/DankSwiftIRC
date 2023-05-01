@@ -24,6 +24,8 @@ public extension IRCMessage {
       return NoticeMessage(irc: self)
     case "PART":
       return PartMessage(irc: self)
+    case "JOIN":
+      return JoinMessage(irc: self)
     case "PING":
       return PingMessage(irc: self)
     case "PRIVMSG":
