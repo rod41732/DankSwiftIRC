@@ -7,7 +7,7 @@
 
 import Foundation
 
-//public enum TwitchMessage {
+// public enum TwitchMessage {
 //    // IRC Messages https://dev.twitch.tv/docs/irc
 //    case noticeMessage(NoticeMessage)
 //    case partMessage([String])
@@ -15,10 +15,10 @@ import Foundation
 //    case privMessage(PrivMessage)
 //
 //    case unknownMessgae(IRCMessage)
-//}
+// }
 
-extension IRCMessage {
-  public func asTwitchMessage() -> TwitchMessage {
+public extension IRCMessage {
+  func asTwitchMessage() -> TwitchMessage {
     switch command {
     case "NOTICE":
       return NoticeMessage(irc: self)
@@ -35,11 +35,10 @@ extension IRCMessage {
     default:
       return UnknownMessage(irc: self)
     }
-
   }
 }
 
-public class TwitchMessage: Identifiable {
+open class TwitchMessage: Identifiable {
   public var id: String
   public var timestamp: Int64
 
@@ -55,10 +54,11 @@ public class AutoIDMessage: TwitchMessage {
   public var raw: IRCMessage
 
   init(irc: IRCMessage) {
-    self.raw = irc
+    raw = irc
     super.init(id: NSUUID().uuidString, timestamp: Int64(Date().timeIntervalSince1970 * 1000))
   }
 }
+
 public class NoticeMessage: AutoIDMessage {
   override init(irc: IRCMessage) {
     super.init(irc: irc)
