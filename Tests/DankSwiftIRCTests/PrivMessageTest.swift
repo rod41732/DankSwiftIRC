@@ -166,4 +166,16 @@ class TwitchMessageParsingTest: XCTestCase {
       XCTFail("Expected to be parsed as PRIVMSG message")
     }
   }
+
+  func testPrivMessageCustomReward() {
+    let irc = "@badge-info=;badges=no_audio/1;color=#FF69B4;custom-reward-id=184bdb12-8047-4e34-9407-ecfe80e58744;display-name=doge41732;emotes=;first-msg=0;flags=;id=64b43a5e-2203-4f6d-a6bf-21ad3b54358d;mod=0;returning-chatter=0;room-id=11148817;subscriber=0;tmi-sent-ts=1683901139262;turbo=0;user-id=115117172;user-type= :doge41732!doge41732@doge41732.tmi.twitch.tv PRIVMSG #pajlada :forsen redeem test"
+    let message = IRCMessage(message: irc).asTwitchMessage()
+    switch message {
+    case let message as PrivMessage:
+      XCTAssertEqual(message.customRewardId, "184bdb12-8047-4e34-9407-ecfe80e58744")
+
+    default:
+      XCTFail("Expected to be parsed as PRIVMSG message")
+    }
+  }
 }

@@ -56,6 +56,9 @@ public class PrivMessage: TwitchMessage {
   public var parentDisplayName: String?
   public var parentBody: String?
 
+  // reward of redeeming point, this is only for redemption with message
+  public var customRewardId: String?
+
   public init(irc: IRCMessage) {
     raw = irc
 
@@ -80,6 +83,7 @@ public class PrivMessage: TwitchMessage {
       m1.position.0 < m2.position.0
     })
 
+    // reply
     if let parentId = irc.tag["reply-parent-msg-id"] {
       parentMessageId = parentId
       parentUserId = irc.tag["reply-parent-user-id"]!
@@ -87,6 +91,9 @@ public class PrivMessage: TwitchMessage {
       parentDisplayName = irc.tag["reply-parent-display-name"]!
       parentBody = irc.tag["reply-parent-msg-body"]!
     }
+    // rewards
+    customRewardId = irc.tag["custom-reward-id"]
+
     super.init(id: irc.tag["id"]!, timestamp: Int64(irc.tag["tmi-sent-ts"]!)!)
 
     stripReplyUsernamePrefix()
