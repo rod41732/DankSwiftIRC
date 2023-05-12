@@ -1,3 +1,4 @@
 {
-  "lldb.library": "/usr/lib/swift/lib/liblldb.so"
+  "lldb.library": "/usr/lib/swift/lib/liblldb.so",
+  "cmake.configureOnOpen": false
 }

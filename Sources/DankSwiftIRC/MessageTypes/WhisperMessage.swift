@@ -49,7 +49,7 @@ public class WhisperMessage: TwitchMessage {
 
     super.init(
       id: irc.tag["message-id"]!,
-      timestamp: timestamp ?? Int64(Date.now.timeIntervalSince1970 * 1000)
+      timestamp: timestamp ?? Int64(Date().timeIntervalSince1970 * 1000)
     )
   }
 }
