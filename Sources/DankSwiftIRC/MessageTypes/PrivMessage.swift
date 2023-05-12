@@ -1,7 +1,17 @@
-public struct PrivMessageEmote {
+public struct PrivMessageEmote: Equatable {
+  public static func == (lhs: PrivMessageEmote, rhs: PrivMessageEmote) -> Bool {
+    return lhs.emoteID == rhs.emoteID && lhs.name == rhs.name && lhs.position == rhs.position
+  }
+
   public var emoteID: String
   public var name: String
   public var position: (Int, Int)
+
+  public init(emoteID: String, name: String, position: (Int, Int)) {
+    self.emoteID = emoteID
+    self.name = name
+    self.position = position
+  }
 }
 
 func parseEmotes(raw: String, message: String) -> [PrivMessageEmote] {

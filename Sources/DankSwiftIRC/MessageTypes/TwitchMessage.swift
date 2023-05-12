@@ -30,6 +30,8 @@ public extension IRCMessage {
       return PingMessage(irc: self)
     case "PRIVMSG":
       return PrivMessage(irc: self)
+    case "WHISPER":
+      return WhisperMessage(irc: self)
     case "CLEARCHAT":
       return ClearChatMessage(irc: self)
     case "GLOBALUSERSTATE":
