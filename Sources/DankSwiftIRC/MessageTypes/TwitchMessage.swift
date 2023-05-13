@@ -38,6 +38,15 @@ public extension IRCMessage {
       return GlobalUserStateMessage(irc: self)
     case "USERNOTICE":
       return UserNoticeMessage(irc: self)
+    case "ROOMSTATE":
+      return RoomStateMessage(irc: self)
+    case "USERSTATE":
+      return UserStateMessage(irc: self)
+
+      // TODO: RECONNECT
+      // TODO: HOSTTARGET
+      // TODO: CLEARMSG
+
     default:
       return UnknownMessage(irc: self)
     }
