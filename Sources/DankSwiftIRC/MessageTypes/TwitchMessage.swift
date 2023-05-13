@@ -36,6 +36,8 @@ public extension IRCMessage {
       return ClearChatMessage(irc: self)
     case "GLOBALUSERSTATE":
       return GlobalUserStateMessage(irc: self)
+    case "USERNOTICE":
+      return UserNoticeMessage(irc: self)
     default:
       return UnknownMessage(irc: self)
     }
