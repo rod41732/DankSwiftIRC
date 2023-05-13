@@ -75,7 +75,22 @@ public class AutoIDMessage: TwitchMessage {
 }
 
 public class NoticeMessage: AutoIDMessage {
+  public var messageType: String // type of notice -- too many to list as enum
+  public var channelLogin: String
+  public var message: String
+
   override init(irc: IRCMessage) {
+    let parts = irc.params.split(separator: " ", maxSplits: 1, omittingEmptySubsequences: false)
+    channelLogin = String(parts[0].dropFirst())
+
+    var messagePart = String(parts[safe: 1] ?? "") // index safety
+    if messagePart.starts(with: ":") {
+      messagePart = String(messagePart.dropFirst())
+    }
+    message = messagePart
+
+    messageType = irc.tag["msg-id"]!
+
     super.init(irc: irc)
   }
 }
