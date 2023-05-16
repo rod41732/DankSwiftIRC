@@ -21,7 +21,7 @@ public extension IRCMessage {
   func asTwitchMessage() -> TwitchMessage {
     switch command {
     case "NOTICE":
-      return NoticeMessage(irc: self)
+      return NoticeMessage(irc: self, timestamp: Int64(tag["rm-received-ts"] ?? ""))
     case "PART":
       return PartMessage(irc: self)
     case "JOIN":
@@ -71,27 +71,6 @@ public class AutoIDMessage: TwitchMessage {
   init(irc: IRCMessage) {
     raw = irc
     super.init(id: NSUUID().uuidString, timestamp: Int64(Date().timeIntervalSince1970 * 1000))
-  }
-}
-
-public class NoticeMessage: AutoIDMessage {
-  public var messageType: String // type of notice -- too many to list as enum
-  public var channelLogin: String
-  public var message: String
-
-  override init(irc: IRCMessage) {
-    let parts = irc.params.split(separator: " ", maxSplits: 1, omittingEmptySubsequences: false)
-    channelLogin = String(parts[0].dropFirst())
-
-    var messagePart = String(parts[safe: 1] ?? "") // index safety
-    if messagePart.starts(with: ":") {
-      messagePart = String(messagePart.dropFirst())
-    }
-    message = messagePart
-
-    messageType = irc.tag["msg-id"]!
-
-    super.init(irc: irc)
   }
 }
 
