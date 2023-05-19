@@ -21,7 +21,11 @@ public class ClearChatMessage: TwitchMessage {
     return targetUserID != nil && banDuration == nil
   }
 
+  public var raw: IRCMessage
+
   init(irc: IRCMessage) {
+    raw = irc
+
     banDuration = Int(irc.tag["ban-duration"] ?? "")
     channelID = irc.tag["room-id"]!
     targetUserID = irc.tag["target-user-id"]
