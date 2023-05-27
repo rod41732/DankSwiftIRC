@@ -11,6 +11,7 @@ public enum UserNoticeMessageType: String {
   case unraid
   case ritual
   case bitsbadgetier
+  case announcement
 }
 
 public enum UserNoticeRitualType: String {
