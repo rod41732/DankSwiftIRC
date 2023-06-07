@@ -10,13 +10,14 @@ class TestIRCParsingBenchmark: XCTestCase {
         let lines = try! String(contentsOfFile: data, encoding: .utf8).split(separator: "\n", omittingEmptySubsequences: true).map { it in String(it) }
         XCTAssertEqual(lines.count, 1000)
 
-        var parsed: [TwitchMessage] = []
-        parsed.reserveCapacity(1000)
+//        var parsed: [TwitchMessage] = []
+//        parsed.reserveCapacity(1000)
         measure {
             for line in lines {
-                parsed.append(IRCMessage(message: line).asTwitchMessage())
+                IRCMessage(message: line).asTwitchMessage()
+//                parsed.append(IRCMessage(message: line).asTwitchMessage())
             }
-            parsed.removeAll(keepingCapacity: true)
+//            parsed.removeAll(keepingCapacity: true)
         }
     }
 }
