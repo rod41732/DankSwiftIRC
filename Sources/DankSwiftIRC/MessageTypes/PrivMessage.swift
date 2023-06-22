@@ -17,14 +17,14 @@ public struct PrivMessageEmote: Equatable {
 public class StringIndexer {
     private let string: String
     private let scalars: String.UnicodeScalarView
-    private var cacheIndex: (Int, String.UnicodeScalarIndex)? = nil
-    
+    private var cacheIndex: (Int, String.UnicodeScalarIndex)?
+
     public init(string: String) {
         self.string = string
-        self.scalars = self.string.unicodeScalars
+        scalars = self.string.unicodeScalars
     }
-    
-    public func getUnicodeRange(from: Int, to: Int) -> String{
+
+    public func getUnicodeRange(from: Int, to: Int) -> String {
         let baseInt: Int
         let index: String.UnicodeScalarIndex
         if let cacheIndex {
@@ -33,14 +33,13 @@ public class StringIndexer {
             index = scalars.startIndex
             baseInt = 0
         }
-        
+
         let fromIndex = scalars.index(index, offsetBy: from - baseInt)
         let toIndex = scalars.index(fromIndex, offsetBy: to - from)
-        self.cacheIndex = (to, toIndex)
-        
+        cacheIndex = (to, toIndex)
+
         return String(scalars[fromIndex ..< toIndex])
     }
-
 }
 
 func parseEmotes(raw: String, message: String) -> [PrivMessageEmote] {
@@ -63,8 +62,8 @@ extension String {
 public func parseEmote(_ part: String, message: StringIndexer) -> [PrivMessageEmote] { // 100000:1-2,3-4
     let parts = part.split(separator: ":", maxSplits: 1)
     let emoteID = String(parts[0])
-    var name: String? = nil
-    
+    var name: String?
+
     return parts[1].components(separatedBy: ",").map { range in
         let dashIdx = range.firstIndex(of: "-")!
         let from = Int(range[..<dashIdx])!
@@ -143,7 +142,7 @@ public class PrivMessage: TwitchMessage {
     private func stripReplyUsernamePrefix() {
         guard parentMessageId != nil else { return }
         guard message.starts(with: "@" + parentDisplayName!) else { return }
-        let prefixLength = 2 + parentDisplayName!.unicodeScalars.count
+        let prefixLength = min(2 + parentDisplayName!.unicodeScalars.count, message.unicodeScalars.count)
         let strippedMessage = message.unicodeSubstring(from: prefixLength, to: message.unicodeScalars.count)
         let offsetedEmotes = emotes.map { it in
             PrivMessageEmote(
