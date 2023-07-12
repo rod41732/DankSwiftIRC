@@ -37,9 +37,11 @@ public class ClearChatMessage: TwitchMessage {
       targetUserLogin = String(userPart.starts(with: ":") ? userPart.dropFirst() : userPart) // remove the : prefix before user
     }
 
+    // deterministic ID generation
     // NOTE: twitch usually send multiple CLEARCHAT message, generating ID like this mean that there can be
     // multiple message with same ID
-    let id = irc.tag["tmi-sent-ts"]! + "/\(targetUserID ?? "<room>")/\(channelID)"
+    let ts = irc.tag["tmi-sent-ts"]
+    let id = "\(ts)-clearchat-\(channelLogin)-\(targetUserLogin ?? "#\(channelLogin)")"
     super.init(id: id, timestamp: Int64(irc.tag["tmi-sent-ts"]!)!)
   }
 }
