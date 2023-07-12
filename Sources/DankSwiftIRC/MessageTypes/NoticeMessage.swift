@@ -20,7 +20,7 @@ public class NoticeMessage: TwitchMessage {
     message = messagePart
 
     messageType = irc.tag["msg-id"]!
-    let finalizedTimestamp = Int64(Date().timeIntervalSince1970 * 1000)
+    let finalizedTimestamp = timestamp ?? Int64(Date().timeIntervalSince1970 * 1000)
 
     super.init(id: "\(finalizedTimestamp)-\(channelLogin)-notice-\(messageType)", timestamp: timestamp ?? finalizedTimestamp)
   }
