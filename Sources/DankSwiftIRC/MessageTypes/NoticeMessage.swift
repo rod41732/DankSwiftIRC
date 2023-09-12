@@ -19,7 +19,8 @@ public class NoticeMessage: TwitchMessage {
     }
     message = messagePart
 
-    messageType = irc.tag["msg-id"]!
+    // some message, notable authentication error message doesn't have type
+    messageType = irc.tag["msg-id"] ?? "no-type"
     let finalizedTimestamp = timestamp ?? Int64(Date().timeIntervalSince1970 * 1000)
 
     super.init(id: "\(finalizedTimestamp)-\(channelLogin)-notice-\(messageType)", timestamp: timestamp ?? finalizedTimestamp)
