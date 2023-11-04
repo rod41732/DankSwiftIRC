@@ -42,6 +42,8 @@ public extension IRCMessage {
       return RoomStateMessage(irc: self)
     case "USERSTATE":
       return UserStateMessage(irc: self)
+    case "RECONNECT":
+      return ReconnectMessage(irc: self)
 
       // TODO: RECONNECT
       // TODO: HOSTTARGET

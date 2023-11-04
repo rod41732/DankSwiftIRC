@@ -27,3 +27,10 @@ public class JoinMessage: AutoIDMessage {
     super.init(irc: irc)
   }
 }
+
+
+public class ReconnectMessage: AutoIDMessage {
+  override init(irc: IRCMessage) {
+    super.init(irc: irc)
+  }
+}
