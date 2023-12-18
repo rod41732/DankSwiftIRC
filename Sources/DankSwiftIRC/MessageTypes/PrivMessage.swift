@@ -90,11 +90,18 @@ public class PrivMessage: TwitchMessage {
 
     public var raw: IRCMessage
 
+    // the message that is replied to, is supposed to show in the UI
     public var parentMessageId: String?
     public var parentUserId: String?
     public var parentUserLogin: String?
     public var parentDisplayName: String?
     public var parentBody: String?
+
+    // the "root" of thread
+    public var threadParentMessageId: String?
+    public var threadParentUserId: String?
+    public var threadParentUserLogin: String?
+    public var threadParentDisplayName: String?
 
     // reward of redeeming point, this is only for redemption with message
     public var customRewardId: String?
@@ -124,13 +131,18 @@ public class PrivMessage: TwitchMessage {
         })
 
         // reply
-        if let parentId = irc.tag["reply-parent-msg-id"] {
-            parentMessageId = parentId
-            parentUserId = irc.tag["reply-parent-user-id"]!
-            parentUserLogin = irc.tag["reply-parent-user-login"]!
-            parentDisplayName = irc.tag["reply-parent-display-name"]!
-            parentBody = irc.tag["reply-parent-msg-body"]!
-        }
+        parentMessageId = irc.tag["reply-parent-msg-id"]
+        parentUserId = irc.tag["reply-parent-user-id"]
+        parentUserLogin = irc.tag["reply-parent-user-login"]
+        parentDisplayName = irc.tag["reply-parent-display-name"]
+        parentBody = irc.tag["reply-parent-msg-body"]
+
+        // thread parent
+        threadParentMessageId = irc.tag["reply-thread-parent-msg-id"]
+        threadParentUserId = irc.tag["reply-thread-parent-user-id"]
+        threadParentUserLogin = irc.tag["reply-thread-parent-user-login"]
+        threadParentDisplayName = irc.tag["reply-thread-parent-display-name"]
+
         // rewards
         customRewardId = irc.tag["custom-reward-id"]
 
