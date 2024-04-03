@@ -25,4 +25,8 @@ public class NoticeMessage: TwitchMessage {
 
     super.init(id: "\(finalizedTimestamp)-\(channelLogin)-notice-\(messageType)", timestamp: timestamp ?? finalizedTimestamp)
   }
+
+  override public func rawIRC() -> IRCMessage {
+    return raw
+  }
 }

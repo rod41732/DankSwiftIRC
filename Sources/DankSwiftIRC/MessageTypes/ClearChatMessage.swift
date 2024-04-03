@@ -44,4 +44,8 @@ public class ClearChatMessage: TwitchMessage {
     let id = "\(ts)-clearchat-\(channelLogin)-\(targetUserLogin ?? "#\(channelLogin)")"
     super.init(id: id, timestamp: Int64(irc.tag["tmi-sent-ts"]!)!)
   }
+
+  override public func rawIRC() -> IRCMessage {
+    return raw
+  }
 }

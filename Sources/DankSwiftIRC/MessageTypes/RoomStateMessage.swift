@@ -47,4 +47,8 @@ public class RoomStateMessage: TwitchMessage {
       Date().timeIntervalSince1970 * 1000
     ))
   }
+
+  override public func rawIRC() -> IRCMessage {
+    return raw
+  }
 }

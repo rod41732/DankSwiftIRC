@@ -3,9 +3,12 @@ public class GlobalUserStateMessage: AutoIDMessage {
   override init(irc: IRCMessage) {
     emotesSets =
       irc.tag["emote-sets"]?.split(separator: ",", omittingEmptySubsequences: true)
-      .map { it in String(it) } ?? []
+        .map { it in String(it) } ?? []
 
     super.init(irc: irc)
   }
 
+  override public func rawIRC() -> IRCMessage {
+    return raw
+  }
 }

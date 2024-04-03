@@ -16,4 +16,8 @@ public class UserStateMessage: AutoIDMessage {
 
     super.init(irc: irc)
   }
+
+  override public func rawIRC() -> IRCMessage {
+    return raw
+  }
 }

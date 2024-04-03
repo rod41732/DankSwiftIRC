@@ -66,4 +66,8 @@ public class UserNoticeMessage: TwitchMessage {
 
     super.init(id: irc.tag["id"]!, timestamp: Int64(irc.tag["tmi-sent-ts"]!)!)
   }
+
+  override public func rawIRC() -> IRCMessage {
+    return raw
+  }
 }

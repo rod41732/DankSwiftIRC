@@ -52,4 +52,8 @@ public class WhisperMessage: TwitchMessage {
       timestamp: timestamp ?? Int64(Date().timeIntervalSince1970 * 1000)
     )
   }
+
+  override public func rawIRC() -> IRCMessage {
+    return raw
+  }
 }

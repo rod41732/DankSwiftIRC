@@ -167,4 +167,8 @@ public class PrivMessage: TwitchMessage {
         message = strippedMessage
         emotes = offsetedEmotes
     }
+
+    override public func rawIRC() -> IRCMessage {
+        return raw
+    }
 }

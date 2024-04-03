@@ -63,6 +63,10 @@ open class TwitchMessage: Identifiable {
     self.id = id
     self.timestamp = timestamp
   }
+
+  public func rawIRC() -> IRCMessage? {
+    return nil
+  }
 }
 
 /// AutoIDMessage: generate ID and timestamps at the time it parse, it's not deterministic
@@ -73,6 +77,10 @@ public class AutoIDMessage: TwitchMessage {
   init(irc: IRCMessage) {
     raw = irc
     super.init(id: NSUUID().uuidString, timestamp: Int64(Date().timeIntervalSince1970 * 1000))
+  }
+
+  override public func rawIRC() -> IRCMessage? {
+    return raw
   }
 }
 
