@@ -17,6 +17,22 @@ extension String {
         }
         parts.append(part)
         return parts
-
     }
+
+    public var firstUnicodeScalar: UnicodeScalar? {
+        return self.unicodeScalars.first
+    }
+
+    public func unicodeSubstring(from: Int, to: Int) -> String {
+        let u = unicodeScalars
+        let fromIndex = u.index(u.startIndex, offsetBy: from)
+        let toIndex = u.index(fromIndex, offsetBy: to - from)
+        return String(u[fromIndex ..< toIndex])
+    }
+    
+
+    public mutating func dropFirstUnicodeScalar(count: Int = 1) {
+        self.unicodeScalars.removeFirst(count)
+    }
+    
 }

@@ -14,8 +14,8 @@ public class NoticeMessage: TwitchMessage {
     channelLogin = String(parts[0].dropFirst())
 
     var messagePart = String(parts[safe: 1] ?? "") // index safety
-    if messagePart.starts(with: ":") {
-      messagePart = String(messagePart.dropFirst())
+    if messagePart.firstUnicodeScalar == ":" {
+      messagePart.dropFirstUnicodeScalar()
     }
     message = messagePart
 

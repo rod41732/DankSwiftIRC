@@ -35,9 +35,11 @@ public class WhisperMessage: TwitchMessage {
 
     let parts = irc.params.split(byUnicodeScalar: " ", maxSplits: 1)
     receiverLogin = String(parts[0])
-    let rawMesage = parts[1]
-
-    message = rawMesage.first == ":" ? String(rawMesage.dropFirst()) : rawMesage
+    var message = parts[1]
+    if message.firstUnicodeScalar == ":" {
+      message.dropFirstUnicodeScalar()
+    }
+    self.message = message
 
     if let threadID = irc.tag["thread-id"] {
       let parts = threadID.components(separatedBy: "_")

@@ -10,7 +10,7 @@ public class PartMessage: AutoIDMessage {
   public var channels: [String]
 
   override init(irc: IRCMessage) {
-    let channelsPart = irc.params.components(separatedBy: " ").first!
+    let channelsPart = irc.params.split(byUnicodeScalar: " ").first!
     let channels = channelsPart.components(separatedBy: ",").map { String($0.dropFirst(1)) }
     self.channels = channels
     super.init(irc: irc)
@@ -21,7 +21,7 @@ public class JoinMessage: AutoIDMessage {
   public var channels: [String]
 
   override init(irc: IRCMessage) {
-    let channelsPart = irc.params.components(separatedBy: " ").first!
+    let channelsPart = irc.params.split(byUnicodeScalar: " ").first!
     let channels = channelsPart.components(separatedBy: ",").map { String($0.dropFirst(1)) }
     self.channels = channels
     super.init(irc: irc)

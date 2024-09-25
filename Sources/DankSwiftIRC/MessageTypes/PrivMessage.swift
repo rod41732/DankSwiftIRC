@@ -50,14 +50,6 @@ func parseEmotes(raw: String, message: String) -> [PrivMessageEmote] {
     }
 }
 
-extension String {
-    func unicodeSubstring(from: Int, to: Int) -> String {
-        let u = unicodeScalars
-        let fromIndex = u.index(u.startIndex, offsetBy: from)
-        let toIndex = u.index(fromIndex, offsetBy: to - from)
-        return String(u[fromIndex ..< toIndex])
-    }
-}
 
 public func parseEmote(_ part: String, message: StringIndexer) -> [PrivMessageEmote] { // 100000:1-2,3-4
     let parts = part.split(separator: ":", maxSplits: 1)
@@ -72,6 +64,19 @@ public func parseEmote(_ part: String, message: StringIndexer) -> [PrivMessageEm
             name = message.getUnicodeRange(from: from, to: to + 1) // twitch indexing is inclusive end
         }
         return PrivMessageEmote(emoteID: emoteID, name: name!, position: (from, to))
+    }
+}
+
+extension String {
+    func isActionMessage() -> Bool {
+        let prefix = self.unicodeSubstring(from: 0, to: 8)
+        let suffix = self.unicodeScalars.last
+        return prefix == "\u{1}ACTION " && suffix == "\u{1}"
+    }
+
+    mutating func trimAction() {
+        self.dropFirstUnicodeScalar(count: 8)
+        self.unicodeScalars.removeLast()
     }
 }
 
@@ -117,16 +122,23 @@ public class PrivMessage: TwitchMessage {
 
         let parts = irc.params.split(byUnicodeScalar: " ", maxSplits: 1)
         let channelPart = parts[0]
-        let messagePart = parts[1]
+        var rawMessage = parts[1]
 
-        channelLogin = String(channelPart.dropFirst(1))
+        channelLogin = String(channelPart.dropFirst(1)) // drop #
 
         //
-        let rawMessage = messagePart.first == ":" ? String(messagePart.dropFirst(1)) : messagePart
-        isAction = rawMessage.prefix(8) == "\u{1}ACTION "
-        message = isAction ? String(rawMessage.dropFirst(8).dropLast(1)) : rawMessage
+        if rawMessage.firstUnicodeScalar == ":" {
+            rawMessage.dropFirstUnicodeScalar()
+        } 
 
-        emotes = parseEmotes(raw: irc.tag["emotes"] ?? "", message: message).sorted(by: { m1, m2 in
+        isAction = rawMessage.isActionMessage()
+        if isAction {
+            rawMessage.trimAction()
+        }
+        
+        self.message = rawMessage
+
+        emotes = parseEmotes(raw: irc.tag["emotes"] ?? "", message: rawMessage).sorted(by: { m1, m2 in
             m1.position.0 < m2.position.0
         })
 

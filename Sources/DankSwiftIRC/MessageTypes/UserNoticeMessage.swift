@@ -51,10 +51,12 @@ public class UserNoticeMessage: TwitchMessage {
     let parts = irc.params.split(byUnicodeScalar: " ", maxSplits: 1)
     let channelPart = parts[0]
     // handle possible empty message
-    let messagePart = parts[safe: 1] ?? ""
-
+    var message = parts[safe: 1] ?? ""
     channelLogin = String(channelPart.dropFirst(1))
-    message = messagePart.first == ":" ? String(messagePart.dropFirst()) : messagePart
+    if message.firstUnicodeScalar == ":" { 
+      message.dropFirstUnicodeScalar()
+    }
+    self.message = message
 
     emotes = parseEmotes(raw: irc.tag["emotes"] ?? "", message: message).sorted(by: { m1, m2 in
       m1.position.0 < m2.position.0

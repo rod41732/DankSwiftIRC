@@ -40,4 +40,21 @@ class StringSplitTests: XCTestCase {
         XCTAssertEqual(parts3, ["", "foo", "bar"])
     }
 
+
+    func testUnicode() {
+        var msg = ":🏽" // : followed by skin-tone
+        print(msg.prefix(1))
+        XCTAssertTrue(msg.firstUnicodeScalar == ":")
+        msg.dropFirstUnicodeScalar()
+        XCTAssertEqual(msg, "🏽" )
+
+        var msg2 = "foo🏽"
+        msg2.dropFirstUnicodeScalar(count: 3)
+        XCTAssertEqual(msg2, "🏽" )
+    }
+
+    func testActionMessageWithUnicode() {
+        let actionMessageSkinTone = "\u{1}ACTION 🏽x\u{1}"
+        XCTAssertTrue(actionMessageSkinTone.unicodeSubstring(from: 0, to: 8) == "\u{1}ACTION ")
+    }
 }

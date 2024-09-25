@@ -33,14 +33,16 @@ public class ClearChatMessage: TwitchMessage {
     let parts = irc.params.split(byUnicodeScalar: " ", maxSplits: 1)
     channelLogin = String(parts[0].dropFirst(1)) // remove the # prefix before channel
     if parts.count == 2 {
-      let userPart = parts[1]
-      targetUserLogin = userPart.starts(with: ":") ? String(userPart.dropFirst()) : userPart // remove the : prefix before user
+      var targetUserLogin = parts[1]
+      if targetUserLogin.firstUnicodeScalar == ":" {
+        targetUserLogin.dropFirstUnicodeScalar()
+      }
     }
 
     // deterministic ID generation
     // NOTE: twitch usually send multiple CLEARCHAT message, generating ID like this mean that there can be
     // multiple message with same ID
-    let ts = irc.tag["tmi-sent-ts"]
+    let ts = irc.tag["tmi-sent-ts"] ?? ""
     let id = "\(ts)-clearchat-\(channelLogin)-\(targetUserLogin ?? "#\(channelLogin)")"
     super.init(id: id, timestamp: Int64(irc.tag["tmi-sent-ts"]!)!)
   }
