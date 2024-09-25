@@ -30,11 +30,11 @@ public class ClearChatMessage: TwitchMessage {
     channelID = irc.tag["room-id"]!
     targetUserID = irc.tag["target-user-id"]
 
-    let parts = irc.params.split(separator: " ", maxSplits: 1)
+    let parts = irc.params.split(byUnicodeScalar: " ", maxSplits: 1)
     channelLogin = String(parts[0].dropFirst(1)) // remove the # prefix before channel
     if parts.count == 2 {
       let userPart = parts[1]
-      targetUserLogin = String(userPart.starts(with: ":") ? userPart.dropFirst() : userPart) // remove the : prefix before user
+      targetUserLogin = userPart.starts(with: ":") ? String(userPart.dropFirst()) : userPart // remove the : prefix before user
     }
 
     // deterministic ID generation

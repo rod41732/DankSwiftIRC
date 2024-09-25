@@ -10,7 +10,7 @@ public class NoticeMessage: TwitchMessage {
   public init(irc: IRCMessage, timestamp: Int64?) {
     raw = irc
 
-    let parts = irc.params.split(separator: " ", maxSplits: 1, omittingEmptySubsequences: false)
+    let parts = irc.params.split(byUnicodeScalar: " ", maxSplits: 1)
     channelLogin = String(parts[0].dropFirst())
 
     var messagePart = String(parts[safe: 1] ?? "") // index safety

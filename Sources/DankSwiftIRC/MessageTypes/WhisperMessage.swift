@@ -33,11 +33,11 @@ public class WhisperMessage: TwitchMessage {
     let senderID = irc.tag["user-id"]! // define local var to workaround; error: 'self' captured by a closure before all members were initialized
     self.senderID = senderID
 
-    let parts = irc.params.split(separator: " ", maxSplits: 1, omittingEmptySubsequences: false)
+    let parts = irc.params.split(byUnicodeScalar: " ", maxSplits: 1)
     receiverLogin = String(parts[0])
     let rawMesage = parts[1]
 
-    message = String(rawMesage.first == ":" ? rawMesage.dropFirst() : rawMesage)
+    message = rawMesage.first == ":" ? String(rawMesage.dropFirst()) : rawMesage
 
     if let threadID = irc.tag["thread-id"] {
       let parts = threadID.components(separatedBy: "_")

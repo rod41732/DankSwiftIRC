@@ -48,13 +48,13 @@ public class UserNoticeMessage: TwitchMessage {
     channelID = irc.tag["room-id"]!
     userID = irc.tag["user-id"]!
 
-    let parts = irc.params.split(separator: " ", maxSplits: 1, omittingEmptySubsequences: false)
+    let parts = irc.params.split(byUnicodeScalar: " ", maxSplits: 1)
     let channelPart = parts[0]
     // handle possible empty message
     let messagePart = parts[safe: 1] ?? ""
 
     channelLogin = String(channelPart.dropFirst(1))
-    message = String(messagePart.first == ":" ? messagePart.dropFirst(1) : messagePart)
+    message = messagePart.first == ":" ? String(messagePart.dropFirst()) : messagePart
 
     emotes = parseEmotes(raw: irc.tag["emotes"] ?? "", message: message).sorted(by: { m1, m2 in
       m1.position.0 < m2.position.0

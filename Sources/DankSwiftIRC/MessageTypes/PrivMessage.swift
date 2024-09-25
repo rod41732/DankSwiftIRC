@@ -115,16 +115,16 @@ public class PrivMessage: TwitchMessage {
         channelID = irc.tag["room-id"]!
         userID = irc.tag["user-id"]!
 
-        let parts = irc.params.split(separator: " ", maxSplits: 1, omittingEmptySubsequences: false)
+        let parts = irc.params.split(byUnicodeScalar: " ", maxSplits: 1)
         let channelPart = parts[0]
         let messagePart = parts[1]
 
         channelLogin = String(channelPart.dropFirst(1))
 
         //
-        let rawMessage = messagePart.first == ":" ? messagePart.dropFirst(1) : messagePart
+        let rawMessage = messagePart.first == ":" ? String(messagePart.dropFirst(1)) : messagePart
         isAction = rawMessage.prefix(8) == "\u{1}ACTION "
-        message = String(isAction ? rawMessage.dropFirst(8).dropLast(1) : rawMessage)
+        message = isAction ? String(rawMessage.dropFirst(8).dropLast(1)) : rawMessage
 
         emotes = parseEmotes(raw: irc.tag["emotes"] ?? "", message: message).sorted(by: { m1, m2 in
             m1.position.0 < m2.position.0
