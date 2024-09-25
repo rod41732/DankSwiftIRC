@@ -69,7 +69,7 @@ public func parseEmote(_ part: String, message: StringIndexer) -> [PrivMessageEm
 
 extension String {
     func isActionMessage() -> Bool {
-        let prefix = self.unicodeSubstring(from: 0, to: 8)
+        let prefix = String(self.unicodeScalars.prefix(8))
         let suffix = self.unicodeScalars.last
         return prefix == "\u{1}ACTION " && suffix == "\u{1}"
     }

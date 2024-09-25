@@ -33,10 +33,11 @@ public class ClearChatMessage: TwitchMessage {
     let parts = irc.params.split(byUnicodeScalar: " ", maxSplits: 1)
     channelLogin = String(parts[0].dropFirst(1)) // remove the # prefix before channel
     if parts.count == 2 {
-      var targetUserLogin = parts[1]
-      if targetUserLogin.firstUnicodeScalar == ":" {
-        targetUserLogin.dropFirstUnicodeScalar()
+      var rawUserLogin = parts[1]
+      if rawUserLogin.firstUnicodeScalar == ":" {
+        rawUserLogin.dropFirstUnicodeScalar()
       }
+      self.targetUserLogin = rawUserLogin
     }
 
     // deterministic ID generation

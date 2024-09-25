@@ -13,11 +13,11 @@ public class NoticeMessage: TwitchMessage {
     let parts = irc.params.split(byUnicodeScalar: " ", maxSplits: 1)
     channelLogin = String(parts[0].dropFirst())
 
-    var messagePart = String(parts[safe: 1] ?? "") // index safety
-    if messagePart.firstUnicodeScalar == ":" {
-      messagePart.dropFirstUnicodeScalar()
+    var rawMessage = String(parts[safe: 1] ?? "") // index safety
+    if rawMessage.firstUnicodeScalar == ":" {
+      rawMessage.dropFirstUnicodeScalar()
     }
-    message = messagePart
+    message = rawMessage
 
     // some message, notable authentication error message doesn't have type
     messageType = irc.tag["msg-id"] ?? "no-type"
