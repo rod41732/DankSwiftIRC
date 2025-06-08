@@ -60,22 +60,25 @@ public class IRCMessage {
     }
 
     func parse() {
-        var idx = message.startIndex
-        if message[idx] == "@" {
-            let spaceIdx = message.firstIndex(of: " ")!
-            let tagPart = message[message.index(after: idx)..<spaceIdx]
-            parseTags(String(tagPart))
-            idx = message.index(after: spaceIdx)
+        let unicodeView = message.unicodeScalars
+        var unicodeIdx = unicodeView.startIndex
+        if unicodeView[unicodeIdx] == "@" {
+            let spaceIdx = unicodeView.firstIndex(of: " ")!
+            let tagPart = unicodeView[unicodeView.index(after: unicodeIdx)..<spaceIdx]
+            parseTags(Substring(tagPart))
+            unicodeIdx = unicodeView.index(after: spaceIdx)
         }
 
-        if message[idx] == ":" {
-            let msub = message[idx..<message.endIndex]
+        // prefix part
+        if unicodeView[unicodeIdx] == ":" {
+            let msub = unicodeView[unicodeIdx..<unicodeView.endIndex]
             let spaceIdx = msub.firstIndex(of: " ")!
             prefix = String(msub[msub.index(after: msub.startIndex)..<spaceIdx])
-            idx = message.index(after: spaceIdx)
+            unicodeIdx = unicodeView.index(after: spaceIdx)
         }
 
-        let endPart = message[idx..<message.endIndex]
+    // 
+        let endPart = unicodeView[unicodeIdx..<unicodeView.endIndex]
         if let spaceIdx = endPart.firstIndex(of: " ") {
             command = String(endPart[..<spaceIdx])
             params = String(endPart[endPart.index(after: spaceIdx)...])
@@ -85,7 +88,7 @@ public class IRCMessage {
         }
     }
 
-    func parseTags(_ tagString: String) {
+    func parseTags(_ tagString: Substring) {
         var toParse = tagString.unicodeScalars[...]
         while true {
             if let idx = toParse.firstIndex(of: ";") {
