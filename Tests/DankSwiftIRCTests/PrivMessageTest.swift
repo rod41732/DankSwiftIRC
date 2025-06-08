@@ -178,4 +178,17 @@ class TwitchMessageParsingTest: XCTestCase {
       XCTFail("Expected to be parsed as PRIVMSG message")
     }
   }
+
+  func testParsingArabicMessage() {
+    let irc = "@id=c0203572-051e-49b9-8015-956a4abb48fa;user-type=;display-name=﷽﷽﷽﷽﷽﷽﷽﷽﷽﷽﷽;user-id=406796292;room-id=11148817;first-msg=0;flags=;subscriber=0;client-nonce=cd8cadeaf22154bfac6a4abd2a6d66d9;turbo=0;badges=;returning-chatter=0;tmi-sent-ts=1749335887302;color=#9ACD32;mod=0;emotes=;historical=1;rm-received-ts=1749335888418;badge-info= :mmmmmmmmmmmmmmmmmwmmmmmmm!mmmmmmmmmmmmmmmmmwmmmmmmm@mmmmmmmmmmmmmmmmmwmmmmmmm.tmi.twitch.tv PRIVMSG #pajlada :i guess its new since arabic update"
+    let message = IRCMessage(message: irc).asTwitchMessage()
+    switch message {
+    case let message as PrivMessage:
+      XCTAssertEqual(message.userID, "406796292")
+
+    default:
+      XCTFail("Expected to be parsed as PRIVMSG message")
+    }
+
+  }
 }

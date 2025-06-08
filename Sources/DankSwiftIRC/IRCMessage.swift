@@ -14,6 +14,8 @@ public func unescape(_ s: String) -> String {
 //    if s.firstIndex(of: "\\") == nil {
 //        return s
 //    }
+
+
     var raw = Data(s.utf8)
     var idx = 0
     var ptr = 0
@@ -84,13 +86,13 @@ public class IRCMessage {
     }
 
     func parseTags(_ tagString: String) {
-        var toParse = tagString[...]
+        var toParse = tagString.unicodeScalars[...]
         while true {
             if let idx = toParse.firstIndex(of: ";") {
-                parseTagComponent(toParse[..<idx])
+                parseTagComponent(Substring(toParse[..<idx]))
                 toParse = toParse[toParse.index(after: idx)...]
             } else {
-                parseTagComponent(toParse)
+                parseTagComponent(Substring(toParse))
                 break
             }
         }
