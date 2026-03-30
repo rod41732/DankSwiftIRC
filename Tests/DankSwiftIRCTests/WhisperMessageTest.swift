@@ -4,7 +4,7 @@ import XCTest
 class WhisperMessageTest: XCTestCase {
   func testParsingWhisper() {
     let irc = "@badges=;color=#2E8B57;display-name=PAJBOT;emotes=;message-id=50;thread-id=82008718_115117172;turbo=0;user-id=82008718;user-type= :pajbot!pajbot@pajbot.tmi.twitch.tv WHISPER doge41732 :Invalid point amount (examples: 100, 10k, 1m, 0.5k)"
-    let message = IRCMessage(message: irc).asTwitchMessage()
+    let message = parseAsTwitchMessage(irc)
     switch message {
     case let message as WhisperMessage:
       XCTAssertEqual(message.senderLogin, "pajbot")
@@ -22,7 +22,7 @@ class WhisperMessageTest: XCTestCase {
 
   func testParsingMessageWithEmotes() {
     let irc = "@badges=game-developer/1;color=#F1C40F;display-name=SunRed_;emotes=emotesv2_cb1306b84ade423ea57f89e3ac7db6f6:0-9/1512058:11-17;message-id=4;thread-id=99308836_115117172;turbo=0;user-id=99308836;user-type= :sunred_!sunred_@sunred_.tmi.twitch.tv WHISPER doge41732 :sunredWave pajaHey"
-    let message = IRCMessage(message: irc).asTwitchMessage()
+    let message = parseAsTwitchMessage(irc)
     switch message {
     case let message as WhisperMessage:
       XCTAssertEqual(message.senderLogin, "sunred_")

@@ -5,7 +5,7 @@ import XCTest
 class JoinMessageTests: XCTestCase {
   func testPartMessageSingleChannel() {
     let irc = ":tmi.twitch.tv JOIN #pajlada"
-    let message = IRCMessage(message: irc).asTwitchMessage()
+    let message = parseAsTwitchMessage(irc)
     switch message {
     case let message as JoinMessage:
       XCTAssertEqual(message.channels, ["pajlada"])
@@ -16,7 +16,7 @@ class JoinMessageTests: XCTestCase {
 
   func testPartMessageMultiChannel() {
     let irc = ":tmi.twitch.tv JOIN #pajlada,#flex3rs"
-    let message = IRCMessage(message: irc).asTwitchMessage()
+    let message = parseAsTwitchMessage(irc)
     switch message {
     case let message as JoinMessage:
       XCTAssertEqual(message.channels, ["pajlada", "flex3rs"])

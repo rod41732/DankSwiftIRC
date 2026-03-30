@@ -5,7 +5,7 @@ import XCTest
 class RoomStateMessageTest: XCTestCase {
   func testInitialRoomState() {
     let irc = "@emote-only=0;followers-only=-1;r9k=0;rituals=0;room-id=11148817;slow=0;subs-only=0 :tmi.twitch.tv ROOMSTATE #pajlada"
-    let message = IRCMessage(message: irc).asTwitchMessage()
+    let message = parseAsTwitchMessage(irc)
     switch message {
     case let message as RoomStateMessage:
       XCTAssertEqual(message.channelID, "11148817")
@@ -23,7 +23,7 @@ class RoomStateMessageTest: XCTestCase {
 
   func testRoomStateDiff() {
     let irc = "@slow=10;room-id=123 :tmi.twitch.tv ROOMSTATE #dallas"
-    let message = IRCMessage(message: irc).asTwitchMessage()
+    let message = parseAsTwitchMessage(irc)
     switch message {
     case let message as RoomStateMessage:
       XCTAssertEqual(message.channelID, "123")

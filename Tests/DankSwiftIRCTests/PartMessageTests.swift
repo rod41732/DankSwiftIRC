@@ -5,7 +5,7 @@ import XCTest
 class PartMessageTests: XCTestCase {
   func testPartMessageSingleChannel() {
     let irc = ":tmi.twitch.tv PART #pajlada"
-    let message = IRCMessage(message: irc).asTwitchMessage()
+    let message = parseAsTwitchMessage(irc)
     switch message {
     case let message as PartMessage:
       XCTAssertEqual(message.channels, ["pajlada"])
@@ -16,7 +16,7 @@ class PartMessageTests: XCTestCase {
 
   func testPartMessageMultiChannel() {
     let irc = ":tmi.twitch.tv PART #pajlada,#flex3rs"
-    let message = IRCMessage(message: irc).asTwitchMessage()
+    let message = parseAsTwitchMessage(irc)
     switch message {
     case let message as PartMessage:
       XCTAssertEqual(message.channels, ["pajlada", "flex3rs"])

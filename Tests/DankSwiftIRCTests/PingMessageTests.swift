@@ -5,7 +5,7 @@ import XCTest
 class PingMessageTests: XCTestCase {
   func testParsePingMessage() {
     let irc = "PING :tmi.twitch.tv"
-    let message = IRCMessage(message: irc).asTwitchMessage()
+    let message = parseAsTwitchMessage(irc)
     switch message {
     case let message as PingMessage:
       XCTAssertEqual(message.pingPayload, ":tmi.twitch.tv")

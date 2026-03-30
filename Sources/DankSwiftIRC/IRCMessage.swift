@@ -71,6 +71,18 @@ public class IRCMessage {
         }
     }
 
+    /// Create IRCMessage from pre-parsed IRCMessage3 (avoids re-parsing)
+    public init(from msg3: IRCMessage3) {
+        self.message = msg3.message
+        self.prefix = String(msg3.prefix)
+        self.command = String(msg3.command)
+        self.params = String(msg3.params)
+        self.tag.reserveCapacity(msg3.tag.count)
+        for (k, v) in msg3.tag {
+            self.tag[String(k)] = String(v)
+        }
+    }
+
     func parse() {
         let unicodeView = message.unicodeScalars
         var unicodeIdx = unicodeView.startIndex

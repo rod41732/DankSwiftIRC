@@ -6,7 +6,7 @@ class ClearChatMessageTests: XCTestCase {
   func testPermaBan() {
     let irc =
       "@room-id=12345678;target-user-id=87654321;tmi-sent-ts=1642715756806 :tmi.twitch.tv CLEARCHAT #dallas :ronni"
-    let message = IRCMessage(message: irc).asTwitchMessage()
+    let message = parseAsTwitchMessage(irc)
     switch message {
     case let message as ClearChatMessage:
       XCTAssertEqual(message.channelID, "12345678")
@@ -24,7 +24,7 @@ class ClearChatMessageTests: XCTestCase {
 
   func testClearRoom() {
     let irc = "@room-id=12345678;tmi-sent-ts=1642715695392 :tmi.twitch.tv CLEARCHAT #dallas"
-    let message = IRCMessage(message: irc).asTwitchMessage()
+    let message = parseAsTwitchMessage(irc)
     switch message {
     case let message as ClearChatMessage:
       XCTAssertEqual(message.channelID, "12345678")
@@ -43,7 +43,7 @@ class ClearChatMessageTests: XCTestCase {
   func testTimeoutUser() {
     let irc =
       "@ban-duration=350;room-id=12345678;target-user-id=87654321;tmi-sent-ts=1642719320727 :tmi.twitch.tv CLEARCHAT #dallas :ronni"
-    let message = IRCMessage(message: irc).asTwitchMessage()
+    let message = parseAsTwitchMessage(irc)
     switch message {
     case let message as ClearChatMessage:
       XCTAssertEqual(message.channelID, "12345678")
