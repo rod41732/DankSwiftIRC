@@ -65,9 +65,15 @@ public class IRCMessage2 {
                                 w += 1
                             }
                             let valEnd = w
-                            offsets.append(contentsOf: [keyStart, keyEnd, valStart, valEnd])
+                            offsets.append(keyStart)
+                            offsets.append(keyEnd)
+                            offsets.append(valStart)
+                            offsets.append(valEnd)
                         } else {
-                            offsets.append(contentsOf: [keyStart, keyEnd, keyEnd, keyEnd])
+                            offsets.append(keyStart)
+                            offsets.append(keyEnd)
+                            offsets.append(keyEnd)
+                            offsets.append(keyEnd)
                         }
 
                         if r < tagEnd && srcBuf[r] == 59 { r += 1 }  // skip ';'
@@ -85,10 +91,12 @@ public class IRCMessage2 {
                         r += 1
                         w += 1
                     }
-                    offsets.append(contentsOf: [s, w])
+                    offsets.append(s)
+                    offsets.append(w)
                     r += 1  // skip space
                 } else {
-                    offsets.append(contentsOf: [-1, -1])
+                    offsets.append(-1)
+                    offsets.append(-1)
                 }
 
                 // command
@@ -98,7 +106,8 @@ public class IRCMessage2 {
                     r += 1
                     w += 1
                 }
-                offsets.append(contentsOf: [cs, w])
+                offsets.append(cs)
+                offsets.append(w)
 
                 // params
                 if r < n {
@@ -109,9 +118,11 @@ public class IRCMessage2 {
                         r += 1
                         w += 1
                     }
-                    offsets.append(contentsOf: [ps, w])
+                    offsets.append(ps)
+                    offsets.append(w)
                 } else {
-                    offsets.append(contentsOf: [w, w])
+                    offsets.append(w)
+                    offsets.append(w)
                 }
 
                 return w
@@ -209,9 +220,15 @@ public class IRCMessage3 {
                             x += 1
                         }
                         let valEnd = x
-                        offsets.append(contentsOf: [keyStart, keyEnd, valStart, valEnd])
+                        offsets.append(keyStart)
+                        offsets.append(keyEnd)
+                        offsets.append(valStart)
+                        offsets.append(valEnd)
                     } else {
-                        offsets.append(contentsOf: [keyStart, keyEnd, keyEnd, keyEnd])
+                        offsets.append(keyStart)
+                        offsets.append(keyEnd)
+                        offsets.append(keyEnd)
+                        offsets.append(keyEnd)
                     }
                     if x < tagEnd && buf[x] == 59 { x += 1 }
                 }
@@ -223,21 +240,26 @@ public class IRCMessage3 {
                 x += 1
                 let s = x
                 while x < n && buf[x] != 32 { x += 1 }
-                offsets.append(contentsOf: [s, x])
+                offsets.append(s)
+                offsets.append(x)
                 x += 1
             } else {
-                offsets.append(contentsOf: [-1, -1])
+                offsets.append(-1)
+                offsets.append(-1)
             }
 
             let cs = x
             while x < n && buf[x] != 32 { x += 1 }
-            offsets.append(contentsOf: [cs, x])
+            offsets.append(cs)
+            offsets.append(x)
 
             if x < n {
                 x += 1
-                offsets.append(contentsOf: [x, n])
+                offsets.append(x)
+                offsets.append(n)
             } else {
-                offsets.append(contentsOf: [x, x])
+                offsets.append(x)
+                offsets.append(x)
             }
         }
 
@@ -287,9 +309,15 @@ public class IRCMessage3 {
                                     w += 1
                                 }
                                 let valEnd = w
-                                offsets.append(contentsOf: [keyStart, keyEnd, valStart, valEnd])
+                                offsets.append(keyStart)
+                                offsets.append(keyEnd)
+                                offsets.append(valStart)
+                                offsets.append(valEnd)
                             } else {
-                                offsets.append(contentsOf: [keyStart, keyEnd, keyEnd, keyEnd])
+                                offsets.append(keyStart)
+                                offsets.append(keyEnd)
+                                offsets.append(keyEnd)
+                                offsets.append(keyEnd)
                             }
                             if r < tagEnd && srcBuf[r] == 59 { r += 1 }
                         }
@@ -305,10 +333,12 @@ public class IRCMessage3 {
                             r += 1
                             w += 1
                         }
-                        offsets.append(contentsOf: [s, w])
+                        offsets.append(s)
+                        offsets.append(w)
                         r += 1
                     } else {
-                        offsets.append(contentsOf: [-1, -1])
+                        offsets.append(-1)
+                        offsets.append(-1)
                     }
 
                     let cs = w
@@ -317,7 +347,8 @@ public class IRCMessage3 {
                         r += 1
                         w += 1
                     }
-                    offsets.append(contentsOf: [cs, w])
+                    offsets.append(cs)
+                    offsets.append(w)
 
                     if r < n {
                         r += 1
@@ -327,9 +358,11 @@ public class IRCMessage3 {
                             r += 1
                             w += 1
                         }
-                        offsets.append(contentsOf: [ps, w])
+                        offsets.append(ps)
+                        offsets.append(w)
                     } else {
-                        offsets.append(contentsOf: [w, w])
+                        offsets.append(w)
+                        offsets.append(w)
                     }
 
                     return w
