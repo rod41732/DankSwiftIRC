@@ -1,5 +1,5 @@
 import DankSwiftIRC
 
 func parseAsTwitchMessage(_ message: String) -> TwitchMessage {
-    return IRCMessage(message: message).asTwitchMessage()
+    return IRCMessage(from: IRCMessage3(message: message)).asTwitchMessage()
 }

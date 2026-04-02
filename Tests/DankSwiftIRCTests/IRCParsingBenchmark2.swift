@@ -16,7 +16,7 @@ class TestIRCParsingBenchmark2: XCTestCase {
         parsed.reserveCapacity(1000)
         measure {
             for line in lines {
-                parsed.append(IRCMessage2(message: line))  // .asTwitchMessage()
+                parsed.append(IRCMessage2(message: line))
             }
         }
     }
@@ -42,22 +42,22 @@ class TestIRCParsingBenchmark2: XCTestCase {
     }
 
     /// Parse with IRCMessage2, then convert to IRCMessage (Substring -> String)
-    func testIRCParseBenchmark2ThenConvert() {
-        let testFile = #file
-        let data = (NSString.path(withComponents: [testFile, "../data.1000.txt"]) as NSString)
-            .standardizingPath
+    // func testIRCParseBenchmark2ThenConvert() {
+    //     let testFile = #file
+    //     let data = (NSString.path(withComponents: [testFile, "../data.1000.txt"]) as NSString)
+    //         .standardizingPath
 
-        let lines = try! String(contentsOfFile: data, encoding: .utf8).split(
-            separator: "\n", omittingEmptySubsequences: true
-        ).map { it in String(it) }
-        XCTAssertEqual(lines.count, 1000)
+    //     let lines = try! String(contentsOfFile: data, encoding: .utf8).split(
+    //         separator: "\n", omittingEmptySubsequences: true
+    //     ).map { it in String(it) }
+    //     XCTAssertEqual(lines.count, 1000)
 
-        var parsed: [IRCMessage] = []
-        parsed.reserveCapacity(1000)
-        measure {
-            for line in lines {
-                parsed.append(IRCMessage(from: IRCMessage2(message: line)))
-            }
-        }
-    }
+    //     var parsed: [IRCMessage] = []
+    //     parsed.reserveCapacity(1000)
+    //     measure {
+    //         for line in lines {
+    //             parsed.append(IRCMessage(from: IRCMessage2(message: line)))
+    //         }
+    //     }
+    // }
 }

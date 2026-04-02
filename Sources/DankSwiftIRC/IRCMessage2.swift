@@ -194,32 +194,39 @@ public class IRCMessage3 {
         var offsets = ContiguousArray<Int>()
         offsets.reserveCapacity(200)
         var needUnescape = false
+        var origTagEnd = 0  // byte position of space after '@tags' in original string
 
-        // Pass 1: scan only, record offsets into original string
+        // Single scan pass: record offsets adjusted by escapeCount
         message.withCString { buf in
             let n = strlen(buf)
             var x = 0
+            var escapeCount = 0
 
             if buf[x] == 64 {  // '@'
                 x += 1
                 var tagEnd = x
                 while tagEnd < n && buf[tagEnd] != 32 { tagEnd += 1 }
+                origTagEnd = tagEnd
 
                 while x < tagEnd {
-                    let keyStart = x
-                    while x < tagEnd && buf[x] != 61 && buf[x] != 59 {
-                        x += 1
-                    }
-                    let keyEnd = x
+                    let keyStart = x - escapeCount
+                    while x < tagEnd && buf[x] != 61 && buf[x] != 59 { x += 1 }
+                    let keyEnd = x - escapeCount
 
                     if x < tagEnd && buf[x] == 61 {  // '='
                         x += 1
-                        let valStart = x
-                        while x < tagEnd && buf[x] != 59 {
-                            if buf[x] == 92 { needUnescape = true }  // backslash
-                            x += 1
+                        let valStart = x - escapeCount
+                        while x < tagEnd && buf[x] != 59 {  // ';'
+                            if buf[x] == 92 {  // backslash
+                                needUnescape = true
+                                escapeCount += 1
+                                x += 1  // skip '\'
+                                if x < tagEnd { x += 1 }  // skip escape char
+                            } else {
+                                x += 1
+                            }
                         }
-                        let valEnd = x
+                        let valEnd = x - escapeCount
                         offsets.append(keyStart)
                         offsets.append(keyEnd)
                         offsets.append(valStart)
@@ -238,133 +245,65 @@ public class IRCMessage3 {
 
             if x < n && buf[x] == 58 {  // ':'
                 x += 1
-                let s = x
+                let s = x - escapeCount
                 while x < n && buf[x] != 32 { x += 1 }
                 offsets.append(s)
-                offsets.append(x)
+                offsets.append(x - escapeCount)
                 x += 1
             } else {
                 offsets.append(-1)
                 offsets.append(-1)
             }
 
-            let cs = x
+            let cs = x - escapeCount
             while x < n && buf[x] != 32 { x += 1 }
             offsets.append(cs)
-            offsets.append(x)
+            offsets.append(x - escapeCount)
 
             if x < n {
                 x += 1
-                offsets.append(x)
-                offsets.append(n)
+                offsets.append(x - escapeCount)
+                offsets.append(n - escapeCount)
             } else {
-                offsets.append(x)
-                offsets.append(x)
+                offsets.append(x - escapeCount)
+                offsets.append(x - escapeCount)
             }
         }
 
         if needUnescape {
-            // Slow path: copy + unescape, re-record offsets
-            offsets.removeAll(keepingCapacity: true)
-
+            // Slow path: produce unescaped string only, reuse offsets
             _base = String(unsafeUninitializedCapacity: message.utf8.count) { outBuf in
                 return message.withCString { srcBuf in
                     let n = strlen(srcBuf)
                     var r = 0
                     var w = 0
-
-                    if srcBuf[r] == 64 {
-                        r += 1
-                        var tagEnd = r
-                        while tagEnd < n && srcBuf[tagEnd] != 32 { tagEnd += 1 }
-
-                        while r < tagEnd {
-                            let keyStart = w
-                            while r < tagEnd && srcBuf[r] != 61 && srcBuf[r] != 59 {
-                                outBuf[w] = UInt8(bitPattern: srcBuf[r])
+                    // Copy tag section with unescaping
+                    while r < origTagEnd {
+                        if srcBuf[r] == 92 {  // backslash
+                            r += 1
+                            if r < origTagEnd {
+                                switch srcBuf[r] {
+                                case 58: outBuf[w] = 59  // \: → ;
+                                case 115: outBuf[w] = 32  // \s → space
+                                case 114: outBuf[w] = 13  // \r → CR
+                                case 110: outBuf[w] = 10  // \n → LF
+                                default: outBuf[w] = UInt8(bitPattern: srcBuf[r])
+                                }
                                 r += 1
                                 w += 1
                             }
-                            let keyEnd = w
-
-                            if r < tagEnd && srcBuf[r] == 61 {
-                                r += 1
-                                let valStart = w
-                                while r < tagEnd && srcBuf[r] != 59 {
-                                    if srcBuf[r] == 92 {
-                                        r += 1
-                                        if r < tagEnd {
-                                            switch srcBuf[r] {
-                                            case 58: outBuf[w] = 59
-                                            case 115: outBuf[w] = 32
-                                            case 114: outBuf[w] = 13
-                                            case 110: outBuf[w] = 10
-                                            default: outBuf[w] = UInt8(bitPattern: srcBuf[r])
-                                            }
-                                        }
-                                    } else {
-                                        outBuf[w] = UInt8(bitPattern: srcBuf[r])
-                                    }
-                                    r += 1
-                                    w += 1
-                                }
-                                let valEnd = w
-                                offsets.append(keyStart)
-                                offsets.append(keyEnd)
-                                offsets.append(valStart)
-                                offsets.append(valEnd)
-                            } else {
-                                offsets.append(keyStart)
-                                offsets.append(keyEnd)
-                                offsets.append(keyEnd)
-                                offsets.append(keyEnd)
-                            }
-                            if r < tagEnd && srcBuf[r] == 59 { r += 1 }
-                        }
-                        r += 1
-                    }
-                    offsets.append(-1)
-
-                    if r < n && srcBuf[r] == 58 {
-                        r += 1
-                        let s = w
-                        while r < n && srcBuf[r] != 32 {
+                        } else {
                             outBuf[w] = UInt8(bitPattern: srcBuf[r])
                             r += 1
                             w += 1
                         }
-                        offsets.append(s)
-                        offsets.append(w)
-                        r += 1
-                    } else {
-                        offsets.append(-1)
-                        offsets.append(-1)
                     }
-
-                    let cs = w
-                    while r < n && srcBuf[r] != 32 {
+                    // Copy rest verbatim
+                    while r < n {
                         outBuf[w] = UInt8(bitPattern: srcBuf[r])
                         r += 1
                         w += 1
                     }
-                    offsets.append(cs)
-                    offsets.append(w)
-
-                    if r < n {
-                        r += 1
-                        let ps = w
-                        while r < n {
-                            outBuf[w] = UInt8(bitPattern: srcBuf[r])
-                            r += 1
-                            w += 1
-                        }
-                        offsets.append(ps)
-                        offsets.append(w)
-                    } else {
-                        offsets.append(w)
-                        offsets.append(w)
-                    }
-
                     return w
                 }
             }
@@ -377,6 +316,7 @@ public class IRCMessage3 {
         let utf8 = _base.utf8
         let start = utf8.startIndex
         var i = 0
+        tag.reserveCapacity(offsets.count / 4)
 
         while offsets[i] != -1 {
             let k = Substring(
