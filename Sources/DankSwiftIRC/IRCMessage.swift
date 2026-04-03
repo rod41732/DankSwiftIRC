@@ -11,10 +11,9 @@ private let char_n = ("n".utf8).first!
 private let new_line = ("\n".utf8).first!
 
 public func unescape(_ s: String) -> String {
-//    if s.firstIndex(of: "\\") == nil {
-//        return s
-//    }
-
+    //    if s.firstIndex(of: "\\") == nil {
+    //        return s
+    //    }
 
     var raw = Data(s.utf8)
     var idx = 0
@@ -48,19 +47,18 @@ public func unescape(_ s: String) -> String {
 
 // IRCMessage represent single message according to IRCv3 https://ircv3.net/specs/extensions/message-tags.html
 public class IRCMessage {
-    public var message: String // raw message
-    public var tag = [String: String]() // tags (key value)
-    public var prefix: String = "" // prefix without :
+    public var message: String  // raw message
+    public var tag = [String: String]()  // tags (key value)
+    public var prefix: String = ""  // prefix without :
     public var command: String!
     public var params: String!
 
-    public init(message: String) {
-        self.message = message
-        parse()
+    public convenience init(message: String) {
+        self.init(fromMsg3: IRCMessage3(message: message))
     }
 
     /// Create IRCMessage from pre-parsed IRCMessage2 (avoids re-parsing)
-    public init(from msg2: IRCMessage2) {
+    public init(fromMsg2 msg2: IRCMessage2) {
         self.message = msg2.message
         self.prefix = String(msg2.prefix)
         self.command = String(msg2.command)
@@ -72,7 +70,7 @@ public class IRCMessage {
     }
 
     /// Create IRCMessage from pre-parsed IRCMessage3 (avoids re-parsing)
-    public init(from msg3: IRCMessage3) {
+    public init(fromMsg3 msg3: IRCMessage3) {
         self.message = msg3.message
         self.prefix = String(msg3.prefix)
         self.command = String(msg3.command)
@@ -101,7 +99,7 @@ public class IRCMessage {
             unicodeIdx = unicodeView.index(after: spaceIdx)
         }
 
-    // 
+        //
         let endPart = unicodeView[unicodeIdx..<unicodeView.endIndex]
         if let spaceIdx = endPart.firstIndex(of: " ") {
             command = String(endPart[..<spaceIdx])
@@ -124,14 +122,13 @@ public class IRCMessage {
             }
         }
     }
-    
-    
+
     @inline(__always)
     func parseTagComponent(_ cmp: Substring) {
-            if let idx = cmp.firstIndex(of: "=") {
-                tag[String(cmp[..<idx])] = unescape(String(cmp[cmp.index(after: idx)...]))
-            } else {
-                tag[String(cmp)] = ""
-            }
+        if let idx = cmp.firstIndex(of: "=") {
+            tag[String(cmp[..<idx])] = unescape(String(cmp[cmp.index(after: idx)...]))
+        } else {
+            tag[String(cmp)] = ""
+        }
     }
 }
